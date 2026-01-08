@@ -1,0 +1,2410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Python 연산자 & Input 게임 - 마법 상점</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow: hidden;
+        }
+        
+        .game-container {
+            max-width: 1800px;
+            width: 100%;
+            height: calc(100vh - 30px);
+            background: #0f0f1e;
+            border: 4px solid #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ffd700;
+            flex-shrink: 0;
+        }
+        
+        .game-title {
+            font-size: 24px;
+            color: #ffd700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0px #ff4444;
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 2px 2px 0px #ff4444, 0 0 10px #ffd700; }
+            50% { text-shadow: 2px 2px 0px #ff4444, 0 0 20px #ffd700; }
+        }
+        
+        .subtitle {
+            font-size: 13px;
+            color: #88ccff;
+            margin-top: 5px;
+        }
+        
+        .game-main {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .game-screen {
+            background: #1a1a2e;
+            border: 3px solid #444;
+            border-radius: 8px;
+            padding: 25px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .game-sidebar {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            flex-shrink: 0;
+        }
+        
+        .shop-scene {
+            text-align: center;
+        }
+        
+        .pixel-shop {
+            font-size: 60px;
+            margin: 15px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pixel-character {
+            font-size: 50px;
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .game-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #fff;
+            margin: 10px 0;
+        }
+        
+        .question-box {
+            background: #2a2a4e;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .question-title {
+            font-size: 16px;
+            color: #ffd700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .code-display {
+            background: #0a0a1a;
+            border: 2px solid #44ff44;
+            border-radius: 5px;
+            padding: 12px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #44ff44;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        
+        .code-keyword {
+            color: #ff44ff;
+        }
+        
+        .code-string {
+            color: #ffff44;
+        }
+        
+        .code-number {
+            color: #44ffff;
+        }
+        
+        .code-comment {
+            color: #888;
+        }
+        
+        .input-container {
+            margin: 25px 0;
+        }
+        
+        .game-input {
+            width: 100%;
+            padding: 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 13px;
+            background: #0a0a1a;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            outline: none;
+            margin-top: 8px;
+        }
+        
+        .game-input:focus {
+            border-color: #44ff44;
+            box-shadow: 0 0 10px rgba(68, 255, 68, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        
+        .game-button {
+            padding: 12px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 13px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 #3a3a6a;
+            position: relative;
+            top: 0;
+        }
+        
+        .game-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 0 #3a3a6a, 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .game-button:active {
+            top: 4px;
+            box-shadow: 0 0 0 #3a3a6a;
+        }
+        
+        .game-button.primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 0 #aa3344;
+        }
+        
+        .game-button.primary:hover {
+            box-shadow: 0 6px 0 #aa3344, 0 0 20px rgba(240, 147, 251, 0.5);
+        }
+        
+        .game-button.primary:active {
+            box-shadow: 0 0 0 #aa3344;
+        }
+        
+        .game-button.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            box-shadow: 0 4px 0 #0d6655;
+        }
+        
+        .game-button.success:hover {
+            box-shadow: 0 6px 0 #0d6655, 0 0 20px rgba(56, 239, 125, 0.5);
+        }
+        
+        .game-button.success:active {
+            box-shadow: 0 0 0 #0d6655;
+        }
+        
+        .stats-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a3e 100%);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 12px 15px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #88ccff;
+            margin-bottom: 6px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .feedback {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.correct {
+            background: rgba(56, 239, 125, 0.2);
+            border: 2px solid #38ef7d;
+            color: #38ef7d;
+        }
+        
+        .feedback.incorrect {
+            background: rgba(255, 68, 68, 0.2);
+            border: 2px solid #ff4444;
+            color: #ff4444;
+        }
+        
+        .feedback.info {
+            background: rgba(136, 204, 255, 0.2);
+            border: 2px solid #88ccff;
+            color: #88ccff;
+        }
+        
+        .progress-bar {
+            background: #1a1a2e;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-text {
+            font-size: 16px;
+            color: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .choice-button {
+            padding: 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 13px;
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a3e 100%);
+            color: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            line-height: 1.5;
+        }
+        
+        .choice-button:hover {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, #3a3a5e 0%, #2a2a4e 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .choice-button.selected {
+            border-color: #44ff44;
+            background: linear-gradient(135deg, #1a4a2a 0%, #0a2a1a 100%);
+        }
+        
+        .choice-button.wrong {
+            border-color: #ff4444;
+            background: linear-gradient(135deg, #4a1a1a 0%, #2a0a0a 100%);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        
+        .success-impact {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            z-index: 1000;
+            pointer-events: none;
+            font-size: 20px;
+            animation: confettiFall 3s ease-in forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+        
+        .fail-impact {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            z-index: 1000;
+            animation: failExplosion 1s ease-out forwards;
+            pointer-events: none;
+            filter: drop-shadow(0 0 20px rgba(255, 68, 68, 0.9));
+        }
+        
+        @keyframes failExplosion {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2) rotate(0deg);
+                filter: drop-shadow(0 0 20px rgba(255, 68, 68, 0.9)) brightness(1.5);
+            }
+            10% {
+                transform: translate(-45%, -50%) scale(1.1) rotate(-10deg);
+            }
+            20% {
+                transform: translate(-55%, -50%) scale(1.15) rotate(10deg);
+            }
+            30% {
+                transform: translate(-45%, -50%) scale(1.1) rotate(-15deg);
+            }
+            40% {
+                transform: translate(-55%, -50%) scale(1.15) rotate(15deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3) rotate(0deg);
+                filter: drop-shadow(0 0 40px rgba(255, 68, 68, 1)) brightness(2);
+            }
+            70% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(0.8) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3) rotate(360deg);
+                filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.3)) brightness(0.3);
+            }
+        }
+        
+        @keyframes flashSuccess {
+            0% {
+                opacity: 0;
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        
+        @keyframes flashFail {
+            0% {
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .celebration {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .trophy {
+            font-size: 80px;
+            animation: spin 2s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            75% { transform: rotate(10deg) scale(1.1); }
+        }
+        
+        .final-score {
+            font-size: 20px;
+            color: #ffd700;
+            margin: 15px 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        
+        .hint-box {
+            background: rgba(136, 204, 255, 0.1);
+            border: 2px solid #88ccff;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 12px;
+            color: #88ccff;
+            line-height: 1.5;
+        }
+        
+        .hint-icon {
+            color: #ffd700;
+            margin-right: 5px;
+        }
+        
+        .item-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .item-card {
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a3e 100%);
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .item-icon {
+            font-size: 40px;
+            margin: 10px 0;
+        }
+        
+        .item-name {
+            font-size: 16px;
+            color: #ffd700;
+            margin: 8px 0;
+        }
+        
+        .item-price {
+            font-size: 15px;
+            color: #44ff44;
+            margin: 5px 0;
+        }
+        
+        .hp-bar-container {
+            background: #0a0a1a;
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+        }
+        
+        .hp-bar-label {
+            font-size: 11px;
+            color: #ff8888;
+            margin-bottom: 6px;
+        }
+        
+        .hp-bar-wrapper {
+            background: #1a1a2e;
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            height: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        .hp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444 0%, #ff8888 100%);
+            border-radius: 8px;
+            transition: width 0.5s ease, background 0.3s;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+            position: relative;
+        }
+        
+        .hp-bar-fill.low {
+            background: linear-gradient(90deg, #ff8800 0%, #ffaa00 100%);
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        .hp-bar-fill.critical {
+            background: linear-gradient(90deg, #cc0000 0%, #ff0000 100%);
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .hp-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 15px;
+            }
+            
+            .game-title {
+                font-size: 18px;
+            }
+            
+            .subtitle {
+                font-size: 11px;
+            }
+            
+            .game-text {
+                font-size: 12px;
+            }
+            
+            .game-button {
+                font-size: 11px;
+                padding: 12px 20px;
+            }
+            
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🎮 Python 연산자 & Input 게임</h1>
+            <p class="subtitle">⚔️ 마법 상점에서 배우는 계산과 입력받기</p>
+        </div>
+        
+        <div class="game-main">
+            <div class="game-screen" id="gameScreen">
+                <!-- 게임 화면이 여기에 표시됩니다 -->
+            </div>
+            
+            <div class="game-sidebar">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">
+                    </div>
+                    <div class="progress-text" id="progressText">0 / 0</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #1a1a3e 0%, #0a0a1a 100%); border: 2px solid #88ccff; border-radius: 8px; padding: 15px;">
+                    <div style="font-size: 14px; color: #88ccff; margin-bottom: 10px; text-align: center;">⚡ 액션 코드</div>
+                    <div id="actionCodeDisplay" style="background: #0a0a1a; border: 2px solid #44ff44; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; font-size: 12px; color: #44ff44; line-height: 1.6; max-height: 200px; overflow-y: auto;">
+                        # 액션을 취하면<br># 여기에 코드가 표시됩니다
+                    </div>
+                </div>
+                
+                <div class="hp-bar-container">
+                    <div class="hp-bar-label">❤️ HP</div>
+                    <div class="hp-bar-wrapper">
+                        <div class="hp-bar-fill" id="hpBar" style="width: 100%"></div>
+                        <div class="hp-bar-text" id="hpText">100 / 100</div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #2a2a4e 0%, #1a1a3e 100%); border: 2px solid #44ff44; border-radius: 8px; padding: 15px; text-align: center;">
+                    <div style="font-size: 15px; color: #44ff44; margin-bottom: 10px;">🧪 상점</div>
+                    <div style="font-size: 13px; color: #88ccff; margin-bottom: 12px;">체력 포션<br>300 골드</div>
+                    <button onclick="buyPotion()" class="game-button success" style="width: 100%; font-size: 14px; padding: 12px;">구매하기</button>
+                </div>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <div class="stat-label">⭐ 점수</div>
+                        <div class="stat-value" id="scoreDisplay">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">💰 골드</div>
+                        <div class="stat-value" id="goldDisplay">1000</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">🎯 레벨</div>
+                        <div class="stat-value" id="levelDisplay">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 게임 상태
+        let currentStage = 0;
+        let score = 0;
+        let gold = 1000;
+        let level = 1;
+        let hp = 100;
+        let maxHp = 100;
+        let playerName = "용사";
+        let inventory = [];
+        let quizPool = [];
+        let usedStages = [];
+        let remainingStages = [];
+        let totalQuestions = 0;
+        let correctAnswers = 0;  // 정답 개수 추적
+        let difficultyMultiplier = 1;  // 난이도 배수
+
+        // 게임 스테이지 정의
+        const stages = [
+            // 스테이지 0: 환영 및 이름 입력
+            {
+                type: 'input',
+                title: '🎮 마법 상점에 오신 걸 환영합니다!',
+                scene: `
+                    <div class="shop-scene">
+                        <div class="pixel-shop">🏪</div>
+                        <div class="pixel-character">🧙</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        신비로운 마법 상점에 도착했습니다!<br>
+                        여기서는 Python의 연산자와 input()을 배울 수 있습니다.<br><br>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            Python에서 <span style="color: #ffd700;">input()</span> 함수는<br>
+                            플레이어로부터 정보를 입력받는 마법입니다!
+                        </div>
+                    </div>
+                `,
+                question: '모험가님의 이름을 알려주세요:',
+                inputPlaceholder: '이름을 입력하세요 (예: 용사)',
+                correctAnswer: null, // 모든 답 허용
+                onAnswer: (answer) => {
+                    if (answer.trim() === '') {
+                        return { correct: false, message: '이름을 입력해주세요!' };
+                    }
+                    playerName = answer.trim();
+                    return { 
+                        correct: true, 
+                        message: `환영합니다, ${playerName}님! 🎉<br>Python 코드: <code>name = input("이름: ")</code>`,
+                        points: 50
+                    };
+                }
+            },
+            
+            // 스테이지 1: 덧셈 연산자
+            {
+                type: 'quiz',
+                title: '⚔️ 레벨업 시스템',
+                scene: `
+                    <div class="shop-scene">
+                        <div class="pixel-character">⬆️</div>
+                        <div style="font-size: 40px; margin: 20px 0;">✨ 레벨업! ✨</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        ${playerName}님이 퀘스트를 완료했습니다!<br>
+                        경험치를 획득하고 레벨업을 했어요.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">level</span> = <span class="code-number">5</span><br>
+<span class="code-keyword">level</span> = <span class="code-keyword">level</span> + <span class="code-number">1</span>  <span class="code-comment"># 레벨업!</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"레벨:"</span>, <span class="code-keyword">level</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>덧셈 연산자 (+)</strong><br>
+                            게임에서 레벨업, 아이템 획득, 골드 증가 등에 사용됩니다!
+                        </div>
+                    </div>
+                `,
+                question: '위 코드의 결과는?',
+                choices: ['레벨: 5', '레벨: 6', '레벨: 7', '오류 발생'],
+                correctAnswer: 1,
+                explanation: '정답! level = 5 + 1 = 6이 됩니다. ✅'
+            },
+            
+            // 스테이지 2: 뺄셈 연산자
+            {
+                type: 'quiz',
+                title: '💥 전투 데미지 계산',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🧙 ⚔️ 👾</div>
+                        <div style="font-size: 30px; margin: 20px 0;">💥 공격!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        ${playerName}님이 몬스터와 전투 중입니다!<br>
+                        체력이 100이었는데 35 데미지를 받았어요.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">damage</span> = <span class="code-number">35</span><br>
+<span class="code-keyword">hp</span> = <span class="code-keyword">hp</span> - <span class="code-keyword">damage</span>  <span class="code-comment"># 데미지를 받음!</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"남은 체력:"</span>, <span class="code-keyword">hp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>뺄셈 연산자 (-)</strong><br>
+                            데미지 계산, 아이템 사용, 골드 지불 등에 사용됩니다!
+                        </div>
+                    </div>
+                `,
+                question: '남은 체력은?',
+                choices: ['100', '65', '35', '135'],
+                correctAnswer: 1,
+                explanation: '정답! 100 - 35 = 65의 체력이 남습니다. ✅'
+            },
+            
+            // 스테이지 3: 곱셈 연산자
+            {
+                type: 'quiz',
+                title: '⚡ 크리티컬 히트!',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">💥</div>
+                        <div style="font-size: 35px; margin: 20px 0; color: #ff4444;">CRITICAL!</div>
+                        <div style="font-size: 50px;">⚔️ × 2</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        ${playerName}님의 크리티컬 공격!<br>
+                        기본 데미지가 2배가 됩니다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">base_damage</span> = <span class="code-number">50</span><br>
+<span class="code-keyword">critical</span> = <span class="code-number">2</span><br>
+<span class="code-keyword">total_damage</span> = <span class="code-keyword">base_damage</span> * <span class="code-keyword">critical</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"크리티컬 데미지:"</span>, <span class="code-keyword">total_damage</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>곱셈 연산자 (*)</strong><br>
+                            크리티컬, 버프 효과, 경험치 배수 이벤트 등에 사용됩니다!
+                        </div>
+                    </div>
+                `,
+                question: '크리티컬 데미지는?',
+                choices: ['50', '52', '100', '25'],
+                correctAnswer: 2,
+                explanation: '정답! 50 × 2 = 100 크리티컬 데미지! ⚡'
+            },
+            
+            // 스테이지 4: 복합 대입 연산자
+            {
+                type: 'quiz',
+                title: '💰 골드 획득!',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">💰</div>
+                        <div style="font-size: 30px; margin: 20px 0;">+50 골드</div>
+                        <div class="pixel-character">🎉</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        ${playerName}님이 퀘스트를 완료하고 보상을 받았습니다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">gold</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">gold</span> += <span class="code-number">50</span>  <span class="code-comment"># gold = gold + 50과 같음</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"총 골드:"</span>, <span class="code-keyword">gold</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>복합 대입 연산자 (+=)</strong><br>
+                            gold += 50은 gold = gold + 50과 똑같아요!<br>
+                            더 짧고 편리하게 쓸 수 있습니다. 😊
+                        </div>
+                    </div>
+                `,
+                question: 'gold += 50 실행 후 총 골드는?',
+                choices: ['50', '100', '150', '500'],
+                correctAnswer: 2,
+                explanation: '정답! 100 + 50 = 150 골드입니다. ✅<br>gold += 50은 편리한 축약형입니다!'
+            },
+            
+            // 스테이지 5: 비교 연산자
+            {
+                type: 'quiz',
+                title: '🚪 던전 입장 조건',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🏰</div>
+                        <div style="font-size: 30px; margin: 20px 0;">던전 입구</div>
+                        <div style="font-size: 20px;">⚠️ 레벨 10 이상 필요</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        던전에 입장하려면 레벨 10 이상이어야 합니다.<br>
+                        ${playerName}님의 현재 레벨은 15입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">player_level</span> = <span class="code-number">15</span><br>
+<span class="code-keyword">min_level</span> = <span class="code-number">10</span><br>
+<span class="code-keyword">can_enter</span> = <span class="code-keyword">player_level</span> >= <span class="code-keyword">min_level</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"입장 가능:"</span>, <span class="code-keyword">can_enter</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>비교 연산자 (>=)</strong><br>
+                            >= 는 "크거나 같다"는 뜻입니다.<br>
+                            결과는 True 또는 False가 됩니다!
+                        </div>
+                    </div>
+                `,
+                question: 'can_enter의 값은?',
+                choices: ['True', 'False', '15', '10'],
+                correctAnswer: 0,
+                explanation: '정답! 15 >= 10은 True입니다. 던전 입장 가능! 🎉'
+            },
+            
+            // 스테이지 6: input()으로 숫자 입력
+            {
+                type: 'input',
+                title: '🧪 마법 물약 구매',
+                scene: `
+                    <div class="shop-scene">
+                        <div class="pixel-shop">🏪</div>
+                        <div class="item-display">
+                            <div class="item-card">
+                                <div class="item-icon">🧪</div>
+                                <div class="item-name">체력 물약</div>
+                                <div class="item-price">50 골드</div>
+                            </div>
+                            <div class="item-card">
+                                <div class="item-icon">💙</div>
+                                <div class="item-name">마나 물약</div>
+                                <div class="item-price">30 골드</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        상점에서 물약을 구매합니다.<br>
+                        체력 물약은 50 골드입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">potion_price</span> = <span class="code-number">50</span><br>
+<span class="code-keyword">buy_count</span> = <span class="code-keyword">input</span>(<span class="code-string">"몇 개 살까요? "</span>)<br>
+<span class="code-keyword">buy_count</span> = <span class="code-keyword">int</span>(<span class="code-keyword">buy_count</span>)  <span class="code-comment"># 문자를 숫자로!</span><br>
+<span class="code-keyword">total</span> = <span class="code-keyword">potion_price</span> * <span class="code-keyword">buy_count</span>
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>중요!</strong> input()은 항상 문자열로 받습니다.<br>
+                            계산하려면 <span style="color: #ffd700;">int()</span>로 숫자로 변환해야 해요!
+                        </div>
+                    </div>
+                `,
+                question: '체력 물약을 몇 개 구매하시겠습니까?',
+                inputPlaceholder: '숫자를 입력하세요 (1-10)',
+                correctAnswer: null,
+                onAnswer: (answer) => {
+                    const num = parseInt(answer);
+                    if (isNaN(num) || num < 1 || num > 10) {
+                        return { correct: false, message: '1부터 10 사이의 숫자를 입력해주세요!' };
+                    }
+                    const total = 50 * num;
+                    gold -= total;
+                    inventory.push(`🧪 체력 물약 × ${num}`);
+                    updateStats();
+                    return { 
+                        correct: true, 
+                        message: `체력 물약 ${num}개 구매! 총 ${total} 골드 지불 💰<br>Python이 자동으로 50 × ${num} = ${total}을 계산했어요!`,
+                        points: 100
+                    };
+                }
+            },
+            
+            // 스테이지 7: 나누기 연산자
+            {
+                type: 'quiz',
+                title: '💰 파티 골드 분배',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 50px;">👥 👥 👥 👥</div>
+                        <div style="font-size: 30px; margin: 20px 0;">💰 골드 분배</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        파티가 보스를 처치하고 1000 골드를 획득했습니다!<br>
+                        4명의 파티원에게 공평하게 나눠줍니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">total_gold</span> = <span class="code-number">1000</span><br>
+<span class="code-keyword">party_members</span> = <span class="code-number">4</span><br>
+<span class="code-keyword">gold_per_person</span> = <span class="code-keyword">total_gold</span> / <span class="code-keyword">party_members</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">gold_per_person</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>나누기 연산자 (/)</strong><br>
+                            나누기는 항상 소수점 결과를 만듭니다!
+                        </div>
+                    </div>
+                `,
+                question: '1인당 받는 골드는?',
+                choices: ['250', '250.0', '4', '1000'],
+                correctAnswer: 1,
+                explanation: '정답! 1000 / 4 = 250.0입니다. (소수점 결과) ✅'
+            },
+            
+            // 스테이지 8: 곱셈 응용
+            {
+                type: 'quiz',
+                title: '🎁 경험치 2배 이벤트',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎊</div>
+                        <div style="font-size: 35px; margin: 20px 0; color: #ffd700;">EXP × 2 EVENT!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        주말 이벤트로 경험치 2배!<br>
+                        기본 경험치 75를 획득했습니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">exp</span> = <span class="code-number">75</span><br>
+<span class="code-keyword">event_exp</span> = <span class="code-keyword">exp</span> * <span class="code-number">2</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"이벤트 경험치:"</span>, <span class="code-keyword">event_exp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            게임 이벤트에서 곱셈이 자주 사용됩니다!
+                        </div>
+                    </div>
+                `,
+                question: '이벤트로 얻는 경험치는?',
+                choices: ['75', '77', '150', '2'],
+                correctAnswer: 2,
+                explanation: '정답! 75 × 2 = 150 경험치! 🎉'
+            },
+            
+            // 스테이지 9: -= 연산자
+            {
+                type: 'quiz',
+                title: '🗡️ 몬스터 반격',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">👹 → 🧙</div>
+                        <div style="font-size: 30px; margin: 20px 0; color: #ff4444;">💢 반격!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        보스 몬스터가 강력한 반격을 했습니다!<br>
+                        체력 200에서 45 데미지를 받았어요.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">200</span><br>
+<span class="code-keyword">hp</span> -= <span class="code-number">45</span>  <span class="code-comment"># hp = hp - 45</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"남은 HP:"</span>, <span class="code-keyword">hp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>-= 연산자</strong><br>
+                            hp -= 45는 hp = hp - 45의 축약형입니다!
+                        </div>
+                    </div>
+                `,
+                question: '남은 HP는?',
+                choices: ['245', '200', '155', '45'],
+                correctAnswer: 2,
+                explanation: '정답! 200 - 45 = 155 HP입니다. ✅'
+            },
+            
+            // 스테이지 10: *= 연산자
+            {
+                type: 'quiz',
+                title: '⚗️ 버프 마법',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">✨🔮✨</div>
+                        <div style="font-size: 30px; margin: 20px 0; color: #88ccff;">공격력 3배 버프!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        마법사가 공격력 버프를 걸었습니다!<br>
+                        기본 공격력이 3배가 됩니다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">attack</span> = <span class="code-number">20</span><br>
+<span class="code-keyword">attack</span> *= <span class="code-number">3</span>  <span class="code-comment"># attack = attack * 3</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"버프 공격력:"</span>, <span class="code-keyword">attack</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>*= 연산자</strong><br>
+                            attack *= 3은 attack = attack * 3의 축약형!
+                        </div>
+                    </div>
+                `,
+                question: '버프 후 공격력은?',
+                choices: ['20', '23', '60', '6'],
+                correctAnswer: 2,
+                explanation: '정답! 20 × 3 = 60 공격력! ⚡'
+            },
+            
+            // 스테이지 11: < 비교 연산자
+            {
+                type: 'quiz',
+                title: '⚠️ 위험 경고',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">❤️</div>
+                        <div style="font-size: 30px; margin: 20px 0; color: #ff4444;">⚠️ 체력 부족!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        체력이 낮으면 경고를 표시합니다.<br>
+                        현재 체력이 25입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">25</span><br>
+<span class="code-keyword">is_danger</span> = <span class="code-keyword">hp</span> < <span class="code-number">50</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"위험:"</span>, <span class="code-keyword">is_danger</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>< 연산자</strong><br>
+                            25 < 50은 "25가 50보다 작다"는 뜻!
+                        </div>
+                    </div>
+                `,
+                question: 'is_danger의 값은?',
+                choices: ['True', 'False', '25', '50'],
+                correctAnswer: 0,
+                explanation: '정답! 25 < 50은 True입니다. 위험 상태! ⚠️'
+            },
+            
+            // 스테이지 12: == 비교 연산자
+            {
+                type: 'quiz',
+                title: '🎯 정확히 맞추기',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎯</div>
+                        <div style="font-size: 30px; margin: 20px 0;">정확도 체크</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        상점에서 물건을 정확히 100 골드에 살 수 있는지 확인합니다.<br>
+                        현재 소지금은 100 골드입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">my_gold</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">item_price</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">can_buy</span> = <span class="code-keyword">my_gold</span> == <span class="code-keyword">item_price</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">can_buy</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>== 연산자</strong><br>
+                            ==는 "같다"를 확인합니다. (=는 대입!)
+                        </div>
+                    </div>
+                `,
+                question: 'can_buy의 값은?',
+                choices: ['True', 'False', '100', '200'],
+                correctAnswer: 0,
+                explanation: '정답! 100 == 100은 True입니다. 정확히 일치! ✅'
+            },
+            
+            // 스테이지 13: != 비교 연산자
+            {
+                type: 'quiz',
+                title: '🩹 상태 이상 체크',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🧙</div>
+                        <div style="font-size: 30px; margin: 20px 0;">💚 정상 상태?</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        캐릭터가 중독 상태가 아닌지 확인합니다.<br>
+                        현재 상태는 "정상"입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">status</span> = <span class="code-string">"정상"</span><br>
+<span class="code-keyword">is_healthy</span> = <span class="code-keyword">status</span> != <span class="code-string">"중독"</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"건강:"</span>, <span class="code-keyword">is_healthy</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>!= 연산자</strong><br>
+                            !=는 "같지 않다"를 확인합니다!
+                        </div>
+                    </div>
+                `,
+                question: 'is_healthy의 값은?',
+                choices: ['True', 'False', '정상', '중독'],
+                correctAnswer: 0,
+                explanation: '정답! "정상" != "중독"은 True입니다. 건강해요! 💚'
+            },
+            
+            // 스테이지 14: > 비교 연산자
+            {
+                type: 'quiz',
+                title: '💎 레어 아이템 확인',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">💎</div>
+                        <div style="font-size: 30px; margin: 20px 0;">🌟 레어 등급?</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        아이템 등급이 10보다 크면 레어 아이템입니다.<br>
+                        획득한 아이템의 등급은 15입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">item_grade</span> = <span class="code-number">15</span><br>
+<span class="code-keyword">is_rare</span> = <span class="code-keyword">item_grade</span> > <span class="code-number">10</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"레어:"</span>, <span class="code-keyword">is_rare</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong>> 연산자</strong><br>
+                            15 > 10은 "15가 10보다 크다"!
+                        </div>
+                    </div>
+                `,
+                question: 'is_rare의 값은?',
+                choices: ['True', 'False', '15', '10'],
+                correctAnswer: 0,
+                explanation: '정답! 15 > 10은 True입니다. 레어 아이템 획득! 💎'
+            },
+            
+            // 스테이지 15: <= 비교 연산자
+            {
+                type: 'quiz',
+                title: '🎫 입장 티켓 확인',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎪</div>
+                        <div style="font-size: 30px; margin: 20px 0;">이벤트 입장</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        레벨 20 이하만 입장할 수 있는 초보자 이벤트입니다.<br>
+                        ${playerName}님의 레벨은 18입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">player_level</span> = <span class="code-number">18</span><br>
+<span class="code-keyword">can_enter</span> = <span class="code-keyword">player_level</span> <= <span class="code-number">20</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"입장 가능:"</span>, <span class="code-keyword">can_enter</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            <strong><= 연산자</strong><br>
+                            <=는 "작거나 같다"를 확인합니다!
+                        </div>
+                    </div>
+                `,
+                question: 'can_enter의 값은?',
+                choices: ['True', 'False', '18', '20'],
+                correctAnswer: 0,
+                explanation: '정답! 18 <= 20은 True입니다. 입장 가능! 🎫'
+            },
+            
+            // 스테이지 16: 복합 계산 1
+            {
+                type: 'quiz',
+                title: '🛡️ 방어력 계산',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🛡️⚔️</div>
+                        <div style="font-size: 30px; margin: 20px 0;">실제 데미지 계산</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        공격 데미지에서 방어력을 뺀 값이 실제 데미지입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">attack_damage</span> = <span class="code-number">80</span><br>
+<span class="code-keyword">defense</span> = <span class="code-number">25</span><br>
+<span class="code-keyword">real_damage</span> = <span class="code-keyword">attack_damage</span> - <span class="code-keyword">defense</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">real_damage</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            실제 게임에서 자주 쓰는 계산식입니다!
+                        </div>
+                    </div>
+                `,
+                question: '실제 받는 데미지는?',
+                choices: ['80', '25', '55', '105'],
+                correctAnswer: 2,
+                explanation: '정답! 80 - 25 = 55 데미지입니다! 🛡️'
+            },
+            
+            // 스테이지 17: 복합 계산 2
+            {
+                type: 'quiz',
+                title: '🎰 보상 3배',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎰</div>
+                        <div style="font-size: 35px; margin: 20px 0; color: #ffd700;">대박! 3배 보상!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        럭키 박스에서 대박! 기본 보상의 3배를 받습니다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">base_reward</span> = <span class="code-number">30</span><br>
+<span class="code-keyword">lucky_multiplier</span> = <span class="code-number">3</span><br>
+<span class="code-keyword">total_reward</span> = <span class="code-keyword">base_reward</span> * <span class="code-keyword">lucky_multiplier</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">total_reward</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            곱셈으로 배수 보상을 계산합니다!
+                        </div>
+                    </div>
+                `,
+                question: '총 보상은?',
+                choices: ['30', '33', '90', '10'],
+                correctAnswer: 2,
+                explanation: '정답! 30 × 3 = 90 보상입니다! 대박! 🎰'
+            },
+            
+            // 스테이지 18: 복합 계산 3
+            {
+                type: 'quiz',
+                title: '💊 연속 회복',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">💊💊💊</div>
+                        <div style="font-size: 30px; margin: 20px 0;">회복 물약 사용</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        체력이 50이었는데 물약 2개를 사용했습니다.<br>
+                        물약 1개당 30씩 회복합니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">50</span><br>
+<span class="code-keyword">hp</span> = <span class="code-keyword">hp</span> + <span class="code-number">30</span>  <span class="code-comment"># 첫 번째 물약</span><br>
+<span class="code-keyword">hp</span> = <span class="code-keyword">hp</span> + <span class="code-number">30</span>  <span class="code-comment"># 두 번째 물약</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">hp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            단계별로 차근차근 계산해보세요!
+                        </div>
+                    </div>
+                `,
+                question: '최종 체력은?',
+                choices: ['50', '80', '110', '60'],
+                correctAnswer: 2,
+                explanation: '정답! 50 + 30 + 30 = 110입니다! 완전 회복! 💚'
+            },
+            
+            // 스테이지 19: 복합 대입 연산 응용
+            {
+                type: 'quiz',
+                title: '🏹 연속 공격',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🏹🏹🏹</div>
+                        <div style="font-size: 30px; margin: 20px 0;">3연속 화살!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        궁수가 적에게 연속 공격을 가합니다!<br>
+                        적의 체력에서 데미지를 계속 빼줍니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">enemy_hp</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">enemy_hp</span> -= <span class="code-number">20</span>  <span class="code-comment"># 1타</span><br>
+<span class="code-keyword">enemy_hp</span> -= <span class="code-number">20</span>  <span class="code-comment"># 2타</span><br>
+<span class="code-keyword">enemy_hp</span> -= <span class="code-number">20</span>  <span class="code-comment"># 3타</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">enemy_hp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            -= 연산자를 3번 사용했어요!
+                        </div>
+                    </div>
+                `,
+                question: '적의 남은 체력은?',
+                choices: ['100', '80', '60', '40'],
+                correctAnswer: 3,
+                explanation: '정답! 100 - 20 - 20 - 20 = 40입니다! 🏹'
+            },
+            
+            // 스테이지 20: 종합 문제 1
+            {
+                type: 'quiz',
+                title: '🎯 종합 시험 1',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">📜</div>
+                        <div style="font-size: 30px; margin: 20px 0;">마법사의 시험</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        복잡한 계산을 해봅시다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">100</span><br>
+<span class="code-keyword">hp</span> -= <span class="code-number">30</span>  <span class="code-comment"># 데미지 받음</span><br>
+<span class="code-keyword">potion</span> = <span class="code-number">25</span><br>
+<span class="code-keyword">hp</span> += <span class="code-keyword">potion</span>  <span class="code-comment"># 물약 사용</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">hp</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            천천히 단계별로 계산해보세요!<br>
+                            1. hp = 100에서 시작<br>
+                            2. hp -= 30 실행<br>
+                            3. hp += 25 실행<br>
+                            4. 최종 결과는?
+                        </div>
+                    </div>
+                `,
+                question: '최종 hp 값은?',
+                choices: ['100', '70', '95', '125'],
+                correctAnswer: 2,
+                explanation: '정답! 100 - 30 + 25 = 95입니다. 완벽해요! 🎉'
+            },
+            
+            // 스테이지 21: input() 마나 물약
+            {
+                type: 'input',
+                title: '💙 마나 물약 구매',
+                scene: `
+                    <div class="shop-scene">
+                        <div class="pixel-shop">🏪</div>
+                        <div class="item-display">
+                            <div class="item-card">
+                                <div class="item-icon">💙</div>
+                                <div class="item-name">마나 물약</div>
+                                <div class="item-price">30 골드</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        마법사에게 필요한 마나 물약을 구매합니다!<br>
+                        마나 물약은 30 골드입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">potion_price</span> = <span class="code-number">30</span><br>
+<span class="code-keyword">count</span> = <span class="code-keyword">input</span>(<span class="code-string">"몇 개? "</span>)<br>
+<span class="code-keyword">count</span> = <span class="code-keyword">int</span>(<span class="code-keyword">count</span>)<br>
+<span class="code-keyword">total</span> = <span class="code-keyword">potion_price</span> * <span class="code-keyword">count</span>
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            입력받은 문자를 int()로 숫자로 변환!
+                        </div>
+                    </div>
+                `,
+                question: '마나 물약을 몇 개 구매하시겠습니까?',
+                inputPlaceholder: '숫자를 입력하세요 (1-10)',
+                correctAnswer: null,
+                onAnswer: (answer) => {
+                    const num = parseInt(answer);
+                    if (isNaN(num) || num < 1 || num > 10) {
+                        return { correct: false, message: '1부터 10 사이의 숫자를 입력해주세요!' };
+                    }
+                    const total = 30 * num;
+                    gold -= total;
+                    inventory.push(`💙 마나 물약 × ${num}`);
+                    updateStats();
+                    return { 
+                        correct: true, 
+                        message: `마나 물약 ${num}개 구매! 총 ${total} 골드 지불 💰<br>Python: 30 × ${num} = ${total}`,
+                        points: 100
+                    };
+                }
+            },
+            
+            // 스테이지 22: 경험치 계산
+            {
+                type: 'quiz',
+                title: '⭐ 레벨업 경험치',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">⭐</div>
+                        <div style="font-size: 30px; margin: 20px 0;">레벨업까지?</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        레벨업에 필요한 경험치를 계산합니다.<br>
+                        현재 500 경험치, 필요 경험치 1000입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">current_exp</span> = <span class="code-number">500</span><br>
+<span class="code-keyword">required_exp</span> = <span class="code-number">1000</span><br>
+<span class="code-keyword">need_more</span> = <span class="code-keyword">required_exp</span> - <span class="code-keyword">current_exp</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">need_more</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            필요한 만큼 현재를 빼면 부족한 양!
+                        </div>
+                    </div>
+                `,
+                question: '레벨업까지 필요한 경험치는?',
+                choices: ['1000', '500', '1500', '250'],
+                correctAnswer: 1,
+                explanation: '정답! 1000 - 500 = 500 경험치가 더 필요합니다! ⭐'
+            },
+            
+            // 스테이지 23: 스킬 쿨타임
+            {
+                type: 'quiz',
+                title: '⏰ 스킬 쿨타임',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">⚡</div>
+                        <div style="font-size: 30px; margin: 20px 0;">스킬 준비 중...</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        강력한 스킬의 쿨타임이 10초입니다.<br>
+                        현재 3초가 지났습니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">cooltime</span> = <span class="code-number">10</span><br>
+<span class="code-keyword">passed</span> = <span class="code-number">3</span><br>
+<span class="code-keyword">remaining</span> = <span class="code-keyword">cooltime</span> - <span class="code-keyword">passed</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"남은 시간:"</span>, <span class="code-keyword">remaining</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            전체 시간에서 지난 시간을 빼요!
+                        </div>
+                    </div>
+                `,
+                question: '스킬 사용까지 남은 시간은?',
+                choices: ['10', '3', '7', '13'],
+                correctAnswer: 2,
+                explanation: '정답! 10 - 3 = 7초 남았습니다! ⏰'
+            },
+            
+            // 스테이지 24: 팀 데미지 합산
+            {
+                type: 'quiz',
+                title: '👥 파티 총 데미지',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 50px;">⚔️ 🏹 🔮</div>
+                        <div style="font-size: 30px; margin: 20px 0;">팀워크!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        3명의 파티원이 함께 공격합니다!<br>
+                        전사 50, 궁수 40, 마법사 60 데미지!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">warrior</span> = <span class="code-number">50</span><br>
+<span class="code-keyword">archer</span> = <span class="code-number">40</span><br>
+<span class="code-keyword">mage</span> = <span class="code-number">60</span><br>
+<span class="code-keyword">total_damage</span> = <span class="code-keyword">warrior</span> + <span class="code-keyword">archer</span> + <span class="code-keyword">mage</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">total_damage</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            모든 데미지를 더하면 총 데미지!
+                        </div>
+                    </div>
+                `,
+                question: '파티의 총 데미지는?',
+                choices: ['100', '140', '150', '110'],
+                correctAnswer: 2,
+                explanation: '정답! 50 + 40 + 60 = 150 데미지! 팀워크! 👥'
+            },
+            
+            // 스테이지 25: 아이템 강화
+            {
+                type: 'quiz',
+                title: '⚒️ 무기 강화',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">⚒️</div>
+                        <div style="font-size: 30px; margin: 20px 0;">+3 강화!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        무기를 강화하면 공격력이 올라갑니다!<br>
+                        기본 공격력 40에 강화 보너스 15를 더합니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">base_attack</span> = <span class="code-number">40</span><br>
+<span class="code-keyword">enhance_bonus</span> = <span class="code-number">15</span><br>
+<span class="code-keyword">total_attack</span> = <span class="code-keyword">base_attack</span> + <span class="code-keyword">enhance_bonus</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">total_attack</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            강화로 더 강해집니다!
+                        </div>
+                    </div>
+                `,
+                question: '강화 후 총 공격력은?',
+                choices: ['40', '15', '55', '25'],
+                correctAnswer: 2,
+                explanation: '정답! 40 + 15 = 55 공격력! 강화 성공! ⚒️'
+            },
+            
+            // 스테이지 26: 세트 효과
+            {
+                type: 'quiz',
+                title: '✨ 세트 아이템 효과',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎭</div>
+                        <div style="font-size: 30px; margin: 20px 0;">세트 효과 발동!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        세트 아이템을 모두 착용하면 방어력 2배!<br>
+                        기본 방어력 35입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">defense</span> = <span class="code-number">35</span><br>
+<span class="code-keyword">set_bonus</span> = <span class="code-number">2</span><br>
+<span class="code-keyword">total_defense</span> = <span class="code-keyword">defense</span> * <span class="code-keyword">set_bonus</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">total_defense</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            세트 효과는 곱셈으로 계산!
+                        </div>
+                    </div>
+                `,
+                question: '세트 효과 후 총 방어력은?',
+                choices: ['35', '37', '70', '17'],
+                correctAnswer: 2,
+                explanation: '정답! 35 × 2 = 70 방어력! 세트 효과! ✨'
+            },
+            
+            // 스테이지 27: 상태 확인
+            {
+                type: 'quiz',
+                title: '🔍 체력 상태 확인',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">❤️</div>
+                        <div style="font-size: 30px; margin: 20px 0;">안전한가?</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        체력이 80 이상이면 안전한 상태입니다.<br>
+                        현재 체력은 95입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">hp</span> = <span class="code-number">95</span><br>
+<span class="code-keyword">is_safe</span> = <span class="code-keyword">hp</span> >= <span class="code-number">80</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"안전:"</span>, <span class="code-keyword">is_safe</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            >= 는 "크거나 같다"를 확인!
+                        </div>
+                    </div>
+                `,
+                question: 'is_safe의 값은?',
+                choices: ['True', 'False', '95', '80'],
+                correctAnswer: 0,
+                explanation: '정답! 95 >= 80은 True입니다. 안전! ❤️'
+            },
+            
+            // 스테이지 28: 마나 부족
+            {
+                type: 'quiz',
+                title: '💙 마나 부족 체크',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">💙</div>
+                        <div style="font-size: 30px; margin: 20px 0; color: #88ccff;">마나가...</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        스킬을 쓰려면 마나가 50 이상 필요합니다.<br>
+                        현재 마나는 30입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">mana</span> = <span class="code-number">30</span><br>
+<span class="code-keyword">can_cast</span> = <span class="code-keyword">mana</span> >= <span class="code-number">50</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">"스킬 사용:"</span>, <span class="code-keyword">can_cast</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            30은 50보다 작으므로...
+                        </div>
+                    </div>
+                `,
+                question: 'can_cast의 값은?',
+                choices: ['True', 'False', '30', '50'],
+                correctAnswer: 1,
+                explanation: '정답! 30 >= 50은 False입니다. 마나 부족! 💙'
+            },
+            
+            // 스테이지 29: 보스전 준비
+            {
+                type: 'quiz',
+                title: '👑 보스 도전 자격',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">👑</div>
+                        <div style="font-size: 30px; margin: 20px 0;">보스전 입장</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        보스에 도전하려면 레벨이 25보다 높아야 합니다.<br>
+                        ${playerName}님의 레벨은 30입니다.<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">level</span> = <span class="code-number">30</span><br>
+<span class="code-keyword">min_level</span> = <span class="code-number">25</span><br>
+<span class="code-keyword">can_challenge</span> = <span class="code-keyword">level</span> > <span class="code-keyword">min_level</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">can_challenge</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            > 는 "보다 크다"를 확인!
+                        </div>
+                    </div>
+                `,
+                question: 'can_challenge의 값은?',
+                choices: ['True', 'False', '30', '25'],
+                correctAnswer: 0,
+                explanation: '정답! 30 > 25는 True입니다. 보스 도전 가능! 👑'
+            },
+            
+            // 스테이지 30: 연속 버프
+            {
+                type: 'quiz',
+                title: '✨ 연속 버프 효과',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">✨🔮✨</div>
+                        <div style="font-size: 30px; margin: 20px 0;">버프 중첩!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        공격력에 두 가지 버프를 받습니다!<br>
+                        기본 공격력 30에 +20, 그리고 +15!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">attack</span> = <span class="code-number">30</span><br>
+<span class="code-keyword">attack</span> += <span class="code-number">20</span>  <span class="code-comment"># 첫 번째 버프</span><br>
+<span class="code-keyword">attack</span> += <span class="code-number">15</span>  <span class="code-comment"># 두 번째 버프</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">attack</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            += 연산자를 2번 사용!
+                        </div>
+                    </div>
+                `,
+                question: '최종 공격력은?',
+                choices: ['30', '50', '65', '45'],
+                correctAnswer: 2,
+                explanation: '정답! 30 + 20 + 15 = 65 공격력! 버프 중첩! ✨'
+            },
+            
+            // 스테이지 31: 최종 종합 문제
+            {
+                type: 'quiz',
+                title: '🎓 최종 마스터 시험',
+                scene: `
+                    <div class="shop-scene">
+                        <div style="font-size: 60px;">🎓</div>
+                        <div style="font-size: 30px; margin: 20px 0;">마스터 등급 도전!</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        모든 걸 활용한 복잡한 계산입니다!<br><br>
+                        
+                        <div class="code-display">
+<span class="code-keyword">gold</span> = <span class="code-number">500</span><br>
+<span class="code-keyword">gold</span> += <span class="code-number">100</span>  <span class="code-comment"># 퀘스트 보상</span><br>
+<span class="code-keyword">gold</span> -= <span class="code-number">150</span>  <span class="code-comment"># 물약 구매</span><br>
+<span class="code-keyword">gold</span> *= <span class="code-number">2</span>  <span class="code-comment"># 럭키 이벤트!</span><br>
+<span class="code-keyword">print</span>(<span class="code-keyword">gold</span>)
+                        </div>
+                        
+                        <div class="hint-box">
+                            <span class="hint-icon">💡</span>
+                            순서대로 천천히!<br>
+                            1. 500 + 100 = ?<br>
+                            2. 그 결과 - 150 = ?<br>
+                            3. 그 결과 × 2 = ?
+                        </div>
+                    </div>
+                `,
+                question: '최종 골드는?',
+                choices: ['450', '900', '1200', '600'],
+                correctAnswer: 1,
+                explanation: '정답! (500+100-150)×2 = 450×2 = 900 골드! 마스터! 🎓'
+            },
+            
+            // 스테이지 32: 완료
+            {
+                type: 'complete',
+                title: '🎉 축하합니다!',
+                scene: `
+                    <div class="celebration">
+                        <div class="trophy">🏆</div>
+                        <div class="final-score">CLEAR!</div>
+                        <div style="font-size: 40px; margin: 20px 0;">🎊 ✨ 🎉</div>
+                    </div>
+                `,
+                description: `
+                    <div class="game-text">
+                        ${playerName}님, 모든 과정을 완료했습니다!<br><br>
+                        
+                        <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #ffd700; font-size: 15px;">🎓 오늘 배운 내용:</strong><br><br>
+                            
+                            <div style="text-align: left; font-size: 13px; line-height: 2;">
+                                ✅ <strong>산술 연산자:</strong> +, -, *, /<br>
+                                ✅ <strong>복합 연산자:</strong> +=, -=, *=<br>
+                                ✅ <strong>비교 연산자:</strong> >, <, ==, >=, <=<br>
+                                ✅ <strong>input():</strong> 플레이어 입력 받기<br>
+                                ✅ <strong>int():</strong> 문자를 숫자로 변환<br>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; font-size: 13px; color: #88ccff;">
+                            이제 여러분은 Python으로 계산하고<br>
+                            플레이어와 소통할 수 있습니다! 🚀<br><br>
+                            
+                            <strong style="color: #ffd700;">획득한 아이템:</strong><br>
+                            ${inventory.join('<br>')}
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // 초기화
+        function init() {
+            // 첫 스테이지(이름 입력)와 마지막 스테이지(완료)를 제외한 모든 문제를 풀에 추가
+            for (let i = 1; i < stages.length - 1; i++) {
+                remainingStages.push(i);
+            }
+            totalQuestions = remainingStages.length;
+            updateStats();
+            renderStage();
+            
+            // 키보드 이벤트 리스너 추가
+            document.addEventListener('keydown', handleKeyPress);
+        }
+        
+        // 키보드 입력 처리
+        function handleKeyPress(event) {
+            // 숫자키 1, 2, 3, 4 처리
+            if (event.key >= '1' && event.key <= '4') {
+                const index = parseInt(event.key) - 1;
+                const buttons = document.querySelectorAll('.choice-button');
+                
+                // 선택지가 있고, 해당 인덱스의 버튼이 존재하며, 클릭 가능한 상태인지 확인
+                if (buttons.length > index && buttons[index]) {
+                    const button = buttons[index];
+                    // 버튼이 비활성화되지 않았는지 확인
+                    if (button.style.pointerEvents !== 'none') {
+                        buttons[index].click();
+                    }
+                }
+            }
+        }
+        
+        // 랜덤 스테이지 선택
+        function getRandomStage() {
+            if (remainingStages.length === 0) {
+                // 모든 문제를 풀었으면 완료 화면
+                return stages.length - 1;
+            }
+            const randomIndex = Math.floor(Math.random() * remainingStages.length);
+            const stageIndex = remainingStages[randomIndex];
+            remainingStages.splice(randomIndex, 1);
+            usedStages.push(stageIndex);
+            return stageIndex;
+        }
+
+        // 스테이지 렌더링
+        function renderStage() {
+            const stage = stages[currentStage];
+            const gameScreen = document.getElementById('gameScreen');
+            
+            let html = `
+                <h2 style="color: #ffd700; font-size: 17px; text-align: center; margin-bottom: 20px;">
+                    ${stage.title}
+                </h2>
+                ${stage.scene}
+                ${stage.description}
+            `;
+            
+            if (stage.type === 'quiz') {
+                html += `
+                    <div class="question-box">
+                        <div class="question-title">${stage.question}</div>
+                        <div class="choice-grid">
+                            ${stage.choices.map((choice, index) => `
+                                <button class="choice-button" onclick="checkAnswer(${index})">
+                                    <span style="color: #ffd700; font-weight: bold;">[${index + 1}]</span> ${choice}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #88ccff;">
+                            💡 숫자키 1-4로 빠르게 선택할 수 있습니다
+                        </div>
+                    </div>
+                `;
+            } else if (stage.type === 'input') {
+                html += `
+                    <div class="question-box">
+                        <div class="question-title">${stage.question}</div>
+                        <div class="input-container">
+                            <input type="text" id="userInput" class="game-input" 
+                                   placeholder="${stage.inputPlaceholder}"
+                                   onkeypress="if(event.key==='Enter') submitInput()">
+                        </div>
+                        <div class="button-group">
+                            <button class="game-button primary" onclick="submitInput()">
+                                제출하기 ✅
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (stage.type === 'complete') {
+                html += `
+                    <div class="button-group">
+                        <button class="game-button success" onclick="restartGame()">
+                            다시 도전하기 🔄
+                        </button>
+                    </div>
+                `;
+            }
+            
+            gameScreen.innerHTML = html;
+            
+            // input 필드에 포커스
+            if (stage.type === 'input') {
+                setTimeout(() => {
+                    document.getElementById('userInput')?.focus();
+                }, 100);
+            }
+            
+            updateProgress();
+        }
+
+        // 퀴즈 답변 확인
+        function checkAnswer(selectedIndex) {
+            const stage = stages[currentStage];
+            const buttons = document.querySelectorAll('.choice-button');
+            
+            // 액션 코드 표시
+            showActionCode(`<span style="color: #ff44ff;">selected_answer</span> = <span style="color: #44ffff;">${selectedIndex + 1}</span>  <span style="color: #888;"># 선택한 답</span>`);
+            
+            if (selectedIndex === stage.correctAnswer) {
+                // 정답!
+                buttons.forEach(btn => btn.style.pointerEvents = 'none');
+                buttons[selectedIndex].style.borderColor = '#44ff44';
+                buttons[selectedIndex].style.background = 'linear-gradient(135deg, #1a4a2a 0%, #0a2a1a 100%)';
+                buttons[selectedIndex].classList.add('selected');
+                
+                // 성공 임펙트 효과
+                showSuccessImpact();
+                
+                // 정답 코드 추가
+                setTimeout(() => {
+                    showActionCode(`<span style="color: #ff44ff;">if</span> selected_answer == correct_answer:<br>    <span style="color: #ff44ff;">score</span> += <span style="color: #44ffff;">100</span><br>    <span style="color: #ff44ff;">gold</span> += <span style="color: #44ffff;">50</span>  <span style="color: #888;"># 정답!</span>`);
+                }, 300);
+                
+                // 정답 개수 증가 및 난이도 체크
+                correctAnswers++;
+                const scoreReward = 100 * difficultyMultiplier;
+                const goldReward = 50 * difficultyMultiplier;
+                
+                showFeedback('correct', stage.explanation);
+                score += scoreReward;
+                gold += goldReward;
+                updateStats();
+                
+                // 7문제마다 난이도 상승
+                if (correctAnswers % 7 === 0) {
+                    difficultyMultiplier *= 2;
+                    setTimeout(() => {
+                        showFeedback('info', `🎊 난이도 상승! ${correctAnswers}문제 돌파!<br>⚡ 보상 & 페널티 ${difficultyMultiplier}배! ⚡`);
+                    }, 1500);
+                }
+                
+                setTimeout(() => {
+                    nextStage();
+                }, 3000);
+            } else {
+                // 오답 - 틀린 버튼만 표시하고 다시 선택 가능
+                buttons[selectedIndex].classList.add('wrong');
+                buttons[selectedIndex].style.borderColor = '#ff4444';
+                buttons[selectedIndex].style.background = 'linear-gradient(135deg, #4a1a1a 0%, #2a0a0a 100%)';
+                buttons[selectedIndex].style.pointerEvents = 'none'; // 틀린 버튼만 비활성화
+                
+                // HP 감소 (난이도에 따라 증가)
+                const hpPenalty = 25 * difficultyMultiplier;
+                hp -= hpPenalty;
+                if (hp < 0) hp = 0;
+                updateStats();
+                
+                // 오답 코드 표시
+                setTimeout(() => {
+                    showActionCode(`<span style="color: #ff44ff;">if</span> selected_answer != correct_answer:<br>    <span style="color: #ff44ff;">hp</span> -= <span style="color: #44ffff;">${hpPenalty}</span>  <span style="color: #888;"># 오답 페널티 (x${difficultyMultiplier})</span>`);
+                }, 300);
+                
+                // 실패 임펙트 효과
+                showFailImpact();
+                
+                // HP가 0이 되면 게임 오버
+                if (hp <= 0) {
+                    buttons.forEach(btn => btn.style.pointerEvents = 'none');
+                    showFeedback('incorrect', '💀 HP가 0이 되었습니다! 게임 오버! 😭<br><br>재시작하여 다시 도전해보세요!');
+                    setTimeout(() => {
+                        showGameOver();
+                    }, 2000);
+                } else {
+                    // 오답 이유 설명 표시
+                    const wrongReason = getWrongReason(selectedIndex, stage);
+                    const hpPenalty = 25 * difficultyMultiplier;
+                    showFeedback('incorrect', wrongReason + '<br><br>💔 HP -' + hpPenalty + ' (남은 HP: ' + hp + ')<br>💡 다시 한 번 생각해보고 다른 답을 선택해보세요!');
+                }
+                
+                // 다른 버튼들은 계속 선택 가능하도록 유지 (HP가 0이 아닐 때만)
+            }
+        }
+        
+        // 성공 임펙트 표시
+        function showSuccessImpact() {
+            const confettiCount = 40;
+            const emojis = ['✨', '⭐', '💫', '🌟', '💖', '💛', '💚', '💙', '🎉', '🎊'];
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'success-impact';
+                confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-20px';
+                const duration = 2 + Math.random() * 2;
+                confetti.style.animationDuration = duration + 's';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), (duration + 0.5) * 1000);
+            }
+            
+            // 배경 플래시 효과
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100%';
+            flash.style.height = '100%';
+            flash.style.background = 'radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(56,239,125,0.2) 50%, transparent 100%)';
+            flash.style.zIndex = '999';
+            flash.style.pointerEvents = 'none';
+            flash.style.animation = 'flashSuccess 1.2s ease-out forwards';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                impact.remove();
+                flash.remove();
+            }, 1200);
+        }
+        
+        // 실패 임펙트 표시
+        function showFailImpact() {
+            const impact = document.createElement('div');
+            impact.className = 'fail-impact';
+            impact.innerHTML = '❌💥💢⚡';
+            document.body.appendChild(impact);
+            
+            // 배경 흔들림 효과
+            document.body.style.animation = 'shake 0.5s';
+            
+            // 붉은 플래시 효과
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100%';
+            flash.style.height = '100%';
+            flash.style.background = 'radial-gradient(circle, rgba(255,68,68,0.4) 0%, transparent 70%)';
+            flash.style.zIndex = '999';
+            flash.style.pointerEvents = 'none';
+            flash.style.animation = 'flashFail 1s ease-out forwards';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                impact.remove();
+                flash.remove();
+                document.body.style.animation = '';
+            }, 1000);
+        }
+        
+        // 오답 이유 설명
+        function getWrongReason(selectedIndex, stage) {
+            const selectedChoice = stage.choices[selectedIndex];
+            return `❌ "${selectedChoice}"은(는) 틀렸습니다!`;
+        }
+
+        // 입력 제출
+        function submitInput() {
+            const input = document.getElementById('userInput');
+            const answer = input.value.trim();
+            
+            if (!answer) {
+                showFailImpact();
+                showFeedback('incorrect', '답을 입력해주세요!');
+                return;
+            }
+            
+            const stage = stages[currentStage];
+            const result = stage.onAnswer(answer);
+            
+            if (result.correct) {
+                showSuccessImpact();
+                showFeedback('correct', result.message);
+                score += result.points || 100;
+                updateStats();
+                input.disabled = true;
+                
+                setTimeout(() => {
+                    nextStage();
+                }, 3000);
+            } else {
+                showFailImpact();
+                showFeedback('incorrect', result.message);
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // 피드백 표시
+        function showFeedback(type, message) {
+            const existingFeedback = document.querySelector('.feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${type}`;
+            feedback.innerHTML = message;
+            
+            const questionBox = document.querySelector('.question-box');
+            if (questionBox) {
+                questionBox.appendChild(feedback);
+            }
+        }
+
+        // 다음 스테이지
+        function nextStage() {
+            if (currentStage === 0) {
+                // 첫 번째(이름 입력) 후에는 랜덤 문제 시작
+                currentStage = getRandomStage();
+            } else if (remainingStages.length === 0) {
+                // 모든 문제를 풀었으면 완료 화면으로
+                currentStage = stages.length - 1;
+            } else {
+                // 다음 랜덤 문제 선택
+                currentStage = getRandomStage();
+            }
+            
+            // 레벨업 체크
+            const questionsCompleted = usedStages.length;
+            if (questionsCompleted >= 10 && level === 1) {
+                level = 2;
+            } else if (questionsCompleted >= 20 && level === 2) {
+                level = 3;
+            } else if (questionsCompleted >= 30 && level === 3) {
+                level = 4;
+            }
+            
+            updateStats();
+            renderStage();
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('goldDisplay').textContent = gold;
+            document.getElementById('levelDisplay').textContent = level;
+            
+            // HP 바 업데이트
+            const hpBar = document.getElementById('hpBar');
+            const hpText = document.getElementById('hpText');
+            const hpPercent = (hp / maxHp) * 100;
+            
+            hpBar.style.width = hpPercent + '%';
+            hpText.textContent = hp + ' / ' + maxHp;
+            
+            // HP에 따른 색상 변경
+            hpBar.className = 'hp-bar-fill';
+            if (hpPercent <= 25) {
+                hpBar.classList.add('critical');
+            } else if (hpPercent <= 50) {
+                hpBar.classList.add('low');
+            }
+        }
+
+        // 진행도 업데이트
+        function updateProgress() {
+            const completed = usedStages.length;
+            const progress = (completed / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${completed} / ${totalQuestions}`;
+        }
+        
+        // 체력 포션 구매
+        function buyPotion() {
+            const potionPrice = 300;
+            
+            if (gold < potionPrice) {
+                alert('💰 골드가 부족합니다! (필요: ' + potionPrice + ' 골드)');
+                showActionCode(`<span style="color: #ff44ff;">if</span> gold < <span style="color: #44ffff;">300</span>:<br>    <span style="color: #ff44ff;">print</span>(<span style="color: #ffff44;">"골드 부족!"</span>)  <span style="color: #888;"># 구매 불가</span>`);
+                return;
+            }
+            
+            if (hp >= maxHp) {
+                alert('❤️ 체력이 이미 가득 차 있습니다!');
+                showActionCode(`<span style="color: #ff44ff;">if</span> hp >= max_hp:<br>    <span style="color: #ff44ff;">print</span>(<span style="color: #ffff44;">"체력 가득참!"</span>)  <span style="color: #888;"># 구매 불필요</span>`);
+                return;
+            }
+            
+            // 액션 코드 표시
+            showActionCode(`<span style="color: #888;"># 포션 구매</span><br><span style="color: #ff44ff;">gold</span> -= <span style="color: #44ffff;">300</span><br><span style="color: #ff44ff;">hp</span> += <span style="color: #44ffff;">25</span><br><span style="color: #ff44ff;">print</span>(<span style="color: #ffff44;">"포션 구매 완료!"</span>)`);
+            
+            // 골드 차감
+            gold -= potionPrice;
+            
+            // 체력 회복 (25 회복)
+            const healAmount = 25;
+            hp = Math.min(hp + healAmount, maxHp);
+            
+            // 통계 업데이트
+            updateStats();
+            
+            // 성공 메시지
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '50%';
+            flash.style.left = '50%';
+            flash.style.transform = 'translate(-50%, -50%)';
+            flash.style.fontSize = '40px';
+            flash.style.color = '#44ff44';
+            flash.style.zIndex = '1000';
+            flash.style.animation = 'slideIn 0.5s ease-out';
+            flash.style.fontFamily = 'Press Start 2P';
+            flash.style.textAlign = 'center';
+            flash.style.pointerEvents = 'none';
+            flash.style.textShadow = '0 0 20px rgba(68, 255, 68, 0.8)';
+            flash.innerHTML = '🧪<br>+' + healAmount + ' HP!';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                flash.remove();
+            }, 1500);
+        }
+
+        // 액션 코드 표시 함수
+        function showActionCode(code) {
+            const codeDisplay = document.getElementById('actionCodeDisplay');
+            if (codeDisplay) {
+                codeDisplay.innerHTML = code;
+                // 스크롤을 아래로
+                codeDisplay.scrollTop = codeDisplay.scrollHeight;
+            }
+        }
+
+        // 게임 재시작
+        function restartGame() {
+            currentStage = 0;
+            score = 0;
+            gold = 1000;
+            level = 1;
+            hp = 100;
+            playerName = "용사";
+            inventory = [];
+            usedStages = [];
+            remainingStages = [];
+            correctAnswers = 0;
+            difficultyMultiplier = 1;
+            
+            // 문제 풀 다시 생성
+            for (let i = 1; i < stages.length - 1; i++) {
+                remainingStages.push(i);
+            }
+            
+            // 액션 코드 초기화
+            showActionCode(`<span style="color: #888;"># 게임 시작!</span><br><span style="color: #ff44ff;">hp</span> = <span style="color: #44ffff;">100</span><br><span style="color: #ff44ff;">gold</span> = <span style="color: #44ffff;">1000</span>`);
+            
+            updateStats();
+            renderStage();
+        }
+        
+        // 게임 오버 화면
+        function showGameOver() {
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.innerHTML = `
+                <div class="celebration">
+                    <div style="font-size: 80px;">💀</div>
+                    <div class="final-score" style="color: #ff4444;">GAME OVER</div>
+                    <div style="font-size: 40px; margin: 20px 0;">😭</div>
+                    
+                    <div class="game-text" style="margin: 30px 0;">
+                        HP가 0이 되어 게임이 종료되었습니다.<br><br>
+                        <strong style="color: #ffd700;">최종 점수:</strong> ${score}점<br>
+                        <strong style="color: #ffd700;">획득 골드:</strong> ${gold} 💰<br>
+                        <strong style="color: #ffd700;">도달 레벨:</strong> ${level} ⭐<br><br>
+                        
+                        다시 도전해보세요! 💪
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="game-button success" onclick="restartGame()">
+                            다시 시작하기 🔄
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 게임 시작
+        init();
+    </script>
+</body>
+</html>
